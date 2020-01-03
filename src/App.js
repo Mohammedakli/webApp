@@ -1,4 +1,5 @@
 import React from 'react';
+import "./App.css"
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -7,15 +8,21 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
+import Create from './createForm.js'; 
+import Update from './updateForm';
+import Delete from './deleteProduct'
+import { makeStyles } from '@material-ui/core/styles';
+
 
 const style = {
   table: {
-    minWidth: 650,
+    minWidth: 500,
 
   },
 }
 
 export default class SimpleTable extends React.Component {
+  
   state = {
     products: []
   }
@@ -28,6 +35,7 @@ export default class SimpleTable extends React.Component {
         this.setState({ products });
       })
   }
+  
   render() {
 
     return (
@@ -60,7 +68,9 @@ export default class SimpleTable extends React.Component {
             ))}
           </TableBody>
         </Table>
+        <div><Create/><Update/><Delete/></div>
       </TableContainer>
+     
     );
 
   }
