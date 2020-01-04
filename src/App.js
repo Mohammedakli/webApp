@@ -7,35 +7,39 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import axios from 'axios';
-import Create from './createForm.js'; 
+import Create from './createForm.js';
 import Update from './updateForm';
 import Delete from './deleteProduct'
-import { makeStyles } from '@material-ui/core/styles';
+import socketIOClient from "socket.io-client";
 
 
 const style = {
   table: {
     minWidth: 500,
 
-  },
+  }
 }
 
 export default class SimpleTable extends React.Component {
-  
+
   state = {
     products: []
   }
 
   componentDidMount() {
-    axios.get(`http://localhost:3000/api/list`)
-      .then(res => {
-        console.log("res.data", res.data)
-        const products = res.data;
-        this.setState({ products });
-      })
+    const socket = socketIOClient(`http://localhost:3000`);
+    socket.on("FromAPI", data => this.setState({ products: data }));
   }
-  
+
+  // componentDidMount() {
+  //   axios.get(`http://localhost:3000/api/list`)
+  //     .then(res => {
+  //       console.log("res.data", res.data)
+  //       const products = res.data;
+  //       this.setState({ products });
+  //     })
+  // }
+
   render() {
 
     return (
@@ -43,34 +47,49 @@ export default class SimpleTable extends React.Component {
         <Table className={style.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>id</TableCell>
-              <TableCell align="right">name</TableCell>
-              <TableCell align="right">type</TableCell>
-              <TableCell align="right">price</TableCell>
-              <TableCell align="right">rating</TableCell>
-              <TableCell align="right">warranty_years</TableCell>
-              <TableCell align="right">available</TableCell>
+              <TableCell align="left">name</TableCell>
+              <TableCell align="left">type</TableCell>
+              <TableCell align="left">price</TableCell>
+              <TableCell align="left">rating</TableCell>
+              <TableCell align="left">warranty_years</TableCell>
+              <TableCell align="left">available</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.state.products.data && this.state.products.data.map(row => (
-              <TableRow key={row.name}>
-                <TableCell component="th" scope="row">
-                  {row._id}
+            {this.state.products.data && this.state.products.data.map((row, i) => (
+              <TableRow key={i}>
+                <TableCell align="left">{row.name}</TableCell>
+                <TableCell align="left">{row.type}</TableCell>
+                <TableCell align="left">{row.price}</TableCell>
+                <TableCell align="left">{row.rating}</TableCell>
+                <TableCell align="left">{row.warranty_years}</TableCell>
+                <TableCell align="left">{row.available ? "Yes" : "No"}</TableCell>
+                <TableCell >
+                  <Update
+                    id={row._id}
+                    name={row.name}
+                    type={row.type}
+                    price={row.price}
+                    rating={row.rating}
+                    warranty_years={row.warranty_years}
+                    available={row.available}
+                  />
                 </TableCell>
-                <TableCell align="right">{row.name}</TableCell>
-                <TableCell align="right">{row.type}</TableCell>
-                <TableCell align="right">{row.price}</TableCell>
-                <TableCell align="right">{row.rating}</TableCell>
-                <TableCell align="right">{row.warranty_years}</TableCell>
-                <TableCell align="right">{row.available ? "true" : "false"}</TableCell>
+                <TableCell>
+                  <Delete 
+                  id={row._id}
+                  name={row.name}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        <div><Create/><Update/><Delete/></div>
+        <div><Create /></div>
       </TableContainer>
-     
+
     );
 
   }

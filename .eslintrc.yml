@@ -1,0 +1,11 @@
+env:
+  node: true
+  es6: true
+  mocha: true
+
+extends:
+  - airbnb-base
+
+rules:
+  arrow-body-style: 0
+  eslint linebreak-style: ["error", "windows"]
